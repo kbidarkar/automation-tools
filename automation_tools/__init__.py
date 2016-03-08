@@ -395,13 +395,14 @@ def setup_firewall():
     for protocol in definitions:
         for port in definitions[protocol]:
             rule_exists = run(
-                r'iptables -nL INPUT | grep -E "^ACCEPT\s+{0}.*{1}"'.format(protocol, port),
+                r'iptables -nL INPUT | grep -E "^ACCEPT\s+{0}.*{1}"'
+                .format(protocol, port),
                 quiet=True,
             ).succeeded
             if not rule_exists:
                 run(
-                    'iptables -I INPUT -m state --state NEW -p {0} --dport {1} '
-                    '-j ACCEPT'.format(protocol, port)
+                    'iptables -I INPUT -m state --state NEW -p {0} --dport {1}'
+                    ' -j ACCEPT'.format(protocol, port)
                 )
 
     # To make the changes persistent across reboots when using the command line
@@ -463,7 +464,10 @@ def setup_abrt():
 def setup_oscap():
     """Task to setup oscap on foreman."""
     # Check if ruby193-rubygem-foreman_openscap package is available
-    result = run('yum list ruby193-rubygem-foreman_openscap', quiet=True)
+    package = 'ruby193-rubygem-foreman_openscap'
+    if os.environ.get('SATELLITE_VERSION') == '6.2':
+        package = 'tfm-rubygem-foreman_openscap'
+    result = run('yum list {0}'.format(package), quiet=True)
     if result.failed:
         print('WARNING: OSCAP was not set up')
         return
@@ -471,7 +475,7 @@ def setup_oscap():
     # Install required packages for the installation
     packages = [
         'rubygem-smart_proxy_openscap',
-        'ruby193-rubygem-foreman_openscap'
+        package,
     ]
     for package in packages:
         run('yum install -y {0}'.format(package))
