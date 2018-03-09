@@ -2266,6 +2266,7 @@ def product_install(distribution, create_vm=False, certificate_url=None,
         # Setup Python Code Coverage only for the provisoning jobs.
         execute(setup_python_code_coverage, host=host)
 
+    if os.environ.get('RUBY_CODE_COVERAGE') == 'true'
         # Setup Ruby Code Coverage only for the provisioning jobs.
         execute(setup_ruby_code_coverage, host=host)
 
@@ -2274,6 +2275,7 @@ def product_install(distribution, create_vm=False, certificate_url=None,
 
         # Configure for Ruby TFM Code Coverage.
         execute(setup_rubytfm_code_coverage, host=host)
+
     if (
         os.environ.get('EXTERNAL_AUTH') == 'IDM' or
         os.environ.get('IDM_REALM') == 'true'
